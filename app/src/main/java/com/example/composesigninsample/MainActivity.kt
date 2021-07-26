@@ -9,11 +9,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.TextStyle
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
@@ -67,7 +64,9 @@ sealed class Screen(val route: String) {
 @Composable
 fun SignInScreen(navController: NavController, viewModel: SignInViewModel = hiltViewModel()) {
     if (viewModel.loggedInState) {
-        navController.popBackStack()
+        LaunchedEffect(Unit) {
+            navController.popBackStack()
+        }
     } else {
         Column {
             var text by rememberSaveable { mutableStateOf("") }
@@ -120,7 +119,9 @@ fun HomeScreen(navController: NavController, homeViewModel: HomeViewModel = hilt
             }
         }
     } else {
-        navController.navigate(Screen.SignInScreen.route)
+        LaunchedEffect(Unit) {
+            navController.navigate(Screen.SignInScreen.route)
+        }
     }
 }
 
