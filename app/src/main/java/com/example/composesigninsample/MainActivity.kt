@@ -48,8 +48,12 @@ class MainActivity : ComponentActivity() {
 fun AppRouter() {
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = Screen.HomeScreen.route) {
-        composable(Screen.HomeScreen.route) { HomeScreen(navController = navController) }
-        composable(Screen.SignInScreen.route) { SignInScreen(navController = navController) }
+        composable(Screen.HomeScreen.route) {
+            HomeScreen({
+                navController.navigate(Screen.SignInScreen.route)
+            })
+        }
+        composable(Screen.SignInScreen.route) { SignInScreen({ navController.popBackStack() }) }
     }
 }
 
@@ -62,10 +66,10 @@ sealed class Screen(val route: String) {
  * SignIn Screen and ViewModel
  */
 @Composable
-fun SignInScreen(navController: NavController, viewModel: SignInViewModel = hiltViewModel()) {
+fun SignInScreen(loggedOutEvent: () -> Unit, viewModel: SignInViewModel = hiltViewModel()) {
     if (viewModel.loggedInState) {
         LaunchedEffect(Unit) {
-            navController.popBackStack()
+            loggedOutEvent()
         }
     } else {
         Column {
@@ -109,7 +113,7 @@ class SignInViewModel @Inject constructor(
  * Home Screen and ViewModel
  */
 @Composable
-fun HomeScreen(navController: NavController, homeViewModel: HomeViewModel = hiltViewModel()) {
+fun HomeScreen(navigateHome: () -> Unit, homeViewModel: HomeViewModel = hiltViewModel()) {
     if (homeViewModel.loggedInState) {
         Column {
             Text(style = Typography.h1, text = "You are on the home screen!")
@@ -120,7 +124,7 @@ fun HomeScreen(navController: NavController, homeViewModel: HomeViewModel = hilt
         }
     } else {
         LaunchedEffect(Unit) {
-            navController.navigate(Screen.SignInScreen.route)
+            navigateHome()
         }
     }
 }
