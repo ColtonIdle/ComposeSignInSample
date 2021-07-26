@@ -50,10 +50,15 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun AppRouter() {
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = "home") {
-        composable("home") { HomeScreen(navController = navController) }
-        composable("signin") { SignInScreen(navController = navController) }
+    NavHost(navController = navController, startDestination = Screen.HomeScreen.route) {
+        composable(Screen.HomeScreen.route) { HomeScreen(navController = navController) }
+        composable(Screen.SignInScreen.route) { SignInScreen(navController = navController) }
     }
+}
+
+sealed class Screen(val route: String) {
+    object HomeScreen : Screen("home")
+    object SignInScreen : Screen("signin")
 }
 
 /**
@@ -115,7 +120,7 @@ fun HomeScreen(navController: NavController, homeViewModel: HomeViewModel = hilt
             }
         }
     } else {
-        navController.navigate("signin")
+        navController.navigate(Screen.SignInScreen.route)
     }
 }
 
